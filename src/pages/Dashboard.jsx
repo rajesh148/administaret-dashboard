@@ -52,7 +52,7 @@ const Dashboard = () => {
                 Roles
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/permissions"
                 className={({ isActive }) =>
@@ -63,7 +63,7 @@ const Dashboard = () => {
               >
                 Permissions
               </NavLink>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </aside>
@@ -123,7 +123,7 @@ const Dashboard = () => {
           )}
 
           {/* Recent Activity Section */}
-          {location.pathname === "/" && ( // Show Recent Activity only on the root path
+          {/* {location.pathname === "/" && ( // Show Recent Activity only on the root path
             <div className="bg-white p-4 rounded-lg shadow-md">
               <h2 className="text-lg font-bold mb-4">Recent Activity</h2>
               <ul className="space-y-2">
@@ -147,7 +147,7 @@ const Dashboard = () => {
                 )}
               </ul>
             </div>
-          )}
+          )} */}
 
           {/* Outlet for Other Pages */}
           <Outlet />

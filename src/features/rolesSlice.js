@@ -4,7 +4,9 @@ import { addActivity } from "./activitySlice";
 // Helper function to load data from localStorage
 const loadRolesFromLocalStorage = () => {
   const savedRoles = localStorage.getItem("roles");
-  return savedRoles ? JSON.parse(savedRoles) : [];
+  return savedRoles
+    ? JSON.parse(savedRoles)
+    : [{ id: "1", name: "Admin", permissions: ["read", "write"] }];
 };
 
 // Helper function to save data to localStorage
@@ -16,9 +18,15 @@ const rolesSlice = createSlice({
   name: "roles",
   initialState: {
     roleList: loadRolesFromLocalStorage(),
+    errorMessage: "",
   },
   reducers: {
     addRole(state, action) {
+      console.log("acti", action);
+      if (action.payload.permissions.length <= 0) {
+        state.errorMessage = "Please check atleast one check box";
+        return;
+      }
       state.roleList.push(action.payload);
       saveRolesToLocalStorage(state.roleList);
     },
@@ -37,20 +45,22 @@ const rolesSlice = createSlice({
       );
       saveRolesToLocalStorage(state.roleList);
     },
-    toggleRoleSelection(state, action) {
-      const index = state.roleList.findIndex(
-        (role) => role.id === action.payload
-      );
-      if (index !== -1) {
-        state.roleList[index].selected = !state.roleList[index].selected;
-        saveRolesToLocalStorage(state.roleList);
-      }
+
+    clearError(state, action) {
+      state.errorMessage = null;
+      saveRolesToLocalStorage(state.roleList);
     },
   },
 });
 
-export const { addRole, updateRole, deleteRole, toggleRoleSelection } =
-  rolesSlice.actions;
+export const {
+  addRole,
+  updateRole,
+  deleteRole,
+  toggleRoleSelection,
+  getRole,
+  clearError,
+} = rolesSlice.actions;
 
 // Add Role with Activity
 export const addRoleWithActivity = (role) => (dispatch) => {

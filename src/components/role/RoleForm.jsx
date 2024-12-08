@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addRole,
   addRoleWithActivity,
+  clearError,
   updateRole,
   updateRoleWithActivity,
 } from "../../features/rolesSlice";
@@ -10,7 +11,7 @@ import {
 const RoleForm = ({ currentRole, setCurrentRole }) => {
   const [roleName, setRoleName] = useState("");
   const [permissions, setPermissions] = useState([]);
-  const allPermissions = ["Read", "Write", "Delete"]; // Example permissions
+  const allPermissions = ["Read", "Write", "Update", "Delete"]; // Example permissions
 
   const dispatch = useDispatch();
 
@@ -34,10 +35,10 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!roleName.trim()) {
-      alert("Role name is required");
-      return;
-    }
+    // if (!roleName.trim()) {
+    //   alert("Role name is required");
+    //   return;
+    // }
 
     const roleData = {
       id: currentRole ? currentRole.id : Date.now(),
@@ -50,19 +51,24 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
       // dispatch(updateRole(roleData));
       dispatch(updateRoleWithActivity(roleData)); // Update role with activity
     } else {
-      // dispatch(addRole(roleData));
-      dispatch(addRoleWithActivity(roleData)); // Add role with activity
+      dispatch(addRole(roleData));
+      // dispatch(addRoleWithActivity(roleData)); // Add role with activity
     }
 
     setCurrentRole(null);
     setRoleName("");
     setPermissions([]);
+
+    // setTimeout(() => {
+    //   dispatch(clearError());
+    // }, 2000);
   };
 
   const handleCancel = () => {
     setCurrentRole(null);
     setRoleName("");
     setPermissions([]);
+    dispatch(clearError());
   };
 
   return (
@@ -81,8 +87,12 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
           type="text"
           className="input input-bordered w-full"
           value={roleName}
-          onChange={(e) => setRoleName(e.target.value)}
+          onChange={(e) => {
+            setRoleName(e.target.value);
+            dispatch(clearError());
+          }}
           placeholder="Enter role name"
+          required
         />
       </div>
       <div className="form-control">
@@ -97,7 +107,7 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
             >
               <input
                 type="checkbox"
-                className="checkbox"
+                className="checkbox bg-slate-400"
                 checked={permissions.includes(permission)}
                 onChange={() => handlePermissionChange(permission)}
               />

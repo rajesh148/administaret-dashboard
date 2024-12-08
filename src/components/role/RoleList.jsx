@@ -10,15 +10,19 @@ import { addActivity } from "../../features/activitySlice";
 const RoleList = ({ onEdit }) => {
   const roles = useSelector((state) => state.roles.roleList);
   const dispatch = useDispatch();
-
+  const errorMessage = useSelector((state) => state.roles.errorMessage);
   console.log(roles);
 
   const handleCheckboxChange = (id) => {
     dispatch(toggleRoleSelection(id));
   };
 
+  if (errorMessage && errorMessage === "") {
+  }
   return (
     <div className="p-4">
+      {/* Display error message if a duplicate user exists */}
+      {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
       <h2 className="text-xl font-bold mb-4">Roles</h2>
       <table className="table w-full border-collapse border border-gray-300">
         <thead>

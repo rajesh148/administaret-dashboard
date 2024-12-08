@@ -9,6 +9,7 @@ const loadUsersFromLocalStorage = () => {
 
 const initialState = {
   userList: loadUsersFromLocalStorage(),
+  errorMessage: "",
 };
 
 const usersSlice = createSlice({
@@ -16,9 +17,26 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     addUser(state, action) {
-      const userWithId = { ...action.payload, id: uuidv4() }; // Add unique ID
-      state.userList.push(userWithId);
-      localStorage.setItem("users", JSON.stringify(state.userList)); // Save updated list to localStorage
+      const { email, name, role, status, permissions } = action.payload;
+
+      // Check if the email already exists in the user list
+      const existingUser = state.userList.find((user) => user.email === email);
+
+      if (existingUser) {
+        // If the user already exists, set an error message
+        state.errorMessage = "User with this email already exists";
+      } else {
+        // If the user doesn't exist, add the new user
+        state.userList.push({
+          email,
+          name,
+          role,
+          status,
+          permissions,
+        });
+        // Clear error message after successful addition
+        state.errorMessage = "";
+      }
     },
     updateUser(state, action) {
       const index = state.userList.findIndex(
