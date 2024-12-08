@@ -58,7 +58,6 @@ export const {
   updateRole,
   deleteRole,
   toggleRoleSelection,
-  getRole,
   clearError,
 } = rolesSlice.actions;
 

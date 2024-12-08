@@ -17,7 +17,8 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     addUser(state, action) {
-      const { email, name, role, status, permissions } = action.payload;
+      const { email, name, role, status, permissions, role_id } =
+        action.payload;
 
       // Check if the email already exists in the user list
       const existingUser = state.userList.find((user) => user.email === email);
@@ -33,10 +34,13 @@ const usersSlice = createSlice({
           role,
           status,
           permissions,
+          role_id,
         });
         // Clear error message after successful addition
         state.errorMessage = "";
       }
+
+      localStorage.setItem("users", JSON.stringify(state.userList));
     },
     updateUser(state, action) {
       const index = state.userList.findIndex(
@@ -48,6 +52,34 @@ const usersSlice = createSlice({
       }
     },
 
+    updateUserPermissions(state, action) {
+      const existingUser = state.userList.find(
+        (user) => user.role_id === action.payload.role_id
+      );
+
+      console.log("paylaod", action.payload);
+      console.log("ex ", existingUser);
+      if (existingUser) {
+        // Update the permissions (or any other field) for the existing user
+        existingUser.permissions = action.payload.permissions;
+
+        // Ensure that the state is updated immutably
+        state.userList = state.userList.map((user) =>
+          user.role_id === action.payload.role_id
+            ? { ...user, permissions: action.payload.permissions }
+            : user
+        );
+      }
+
+      localStorage.setItem("users", JSON.stringify(state.userList)); // Save updated list to localStorage
+    },
+
+    clearError(state, action) {
+      state.errorMessage = null;
+
+      localStorage.setItem("users", JSON.stringify(state.userList)); // Save updated list to localStorage
+    },
+
     deleteUser(state, action) {
       state.userList = state.userList.filter(
         (user) => user.id !== action.payload
@@ -57,7 +89,13 @@ const usersSlice = createSlice({
   },
 });
 
-export const { addUser, updateUser, deleteUser } = usersSlice.actions;
+export const {
+  addUser,
+  updateUser,
+  deleteUser,
+  updateUserPermissions,
+  clearError,
+} = usersSlice.actions;
 
 export const addUserWithActivity = (user) => (dispatch) => {
   dispatch(addUser(user));

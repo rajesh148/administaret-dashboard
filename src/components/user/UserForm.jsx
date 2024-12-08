@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addUser,
-  addUserWithActivity,
-  updateUser,
-} from "../../features/usersSlice";
+import { addUser, clearError, updateUser } from "../../features/usersSlice";
 
 const UserForm = ({ currentUser, clearCurrentUser }) => {
   const dispatch = useDispatch();
@@ -18,6 +14,7 @@ const UserForm = ({ currentUser, clearCurrentUser }) => {
     status: "Active",
     role: roles.length > 0 ? roles[0].name : "", // Default to the first role if available
     permissions: roles.length > 0 ? roles[0].permissions : [],
+    role_id: roles.length > 0 ? roles[0].id : "",
   });
 
   useEffect(() => {
@@ -41,14 +38,6 @@ const UserForm = ({ currentUser, clearCurrentUser }) => {
     } else {
       console.log("Form data ", formData);
       dispatch(addUser(formData));
-      // dispatch(addUserWithActivity(formData));
-      // dispatch({
-      //   type: "addActivity",
-      //   payload: {
-      //     timestamp: new Date().toISOString(),
-      //     message: `User "${formData.name}" was added with role "${formData.role}".`,
-      //   },
-      // });
     }
     setFormData({
       name: "",
@@ -56,18 +45,22 @@ const UserForm = ({ currentUser, clearCurrentUser }) => {
       status: "Active",
       role: roles.length > 0 ? roles[0].name : "",
       permissions: roles.length > 0 ? roles[0].permissions : [],
+      role_id: roles.length > 0 ? roles[0].name : "",
     });
     clearCurrentUser();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 w-1/2 mx-auto">
       <input
         type="text"
         placeholder="Name"
         className="input input-bordered w-full"
         value={formData.name}
-        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        onChange={(e) => {
+          setFormData({ ...formData, name: e.target.value });
+          dispatch(clearError());
+        }}
         required
       />
       <input
@@ -75,7 +68,10 @@ const UserForm = ({ currentUser, clearCurrentUser }) => {
         placeholder="Email"
         className="input input-bordered w-full"
         value={formData.email}
-        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        onChange={(e) => {
+          setFormData({ ...formData, email: e.target.value });
+          dispatch(clearError());
+        }}
         required
       />
 
@@ -90,7 +86,10 @@ const UserForm = ({ currentUser, clearCurrentUser }) => {
             ...formData,
             role: selectedRole.name,
             permissions: selectedRole.permissions,
+            role_id: selectedRole.id,
           });
+
+          dispatch(clearError());
         }}
         required
       >
@@ -127,6 +126,7 @@ const UserForm = ({ currentUser, clearCurrentUser }) => {
                 status: "Active",
                 role: roles.length > 0 ? roles[0] : "",
                 permissions: roles.length > 0 ? roles[0].permissions : "",
+                role_id: roles.length > 0 ? roles[0].id : "",
               });
             }}
           >

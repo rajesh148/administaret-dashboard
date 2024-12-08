@@ -7,6 +7,7 @@ import {
   updateRole,
   updateRoleWithActivity,
 } from "../../features/rolesSlice";
+import { updateUserPermissions } from "../../features/usersSlice";
 
 const RoleForm = ({ currentRole, setCurrentRole }) => {
   const [roleName, setRoleName] = useState("");
@@ -55,6 +56,13 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
       // dispatch(addRoleWithActivity(roleData)); // Add role with activity
     }
 
+    dispatch(
+      updateUserPermissions({
+        role_id: roleData.id,
+        permissions: roleData.permissions,
+      })
+    );
+
     setCurrentRole(null);
     setRoleName("");
     setPermissions([]);
@@ -74,7 +82,7 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 bg-white shadow-md rounded-md space-y-4"
+      className="p-4 bg-white shadow-md rounded-md space-y-4 w-1/2 mx-auto"
     >
       <h2 className="text-xl font-bold">
         {currentRole ? "Edit Role" : "Add Role"}
@@ -116,16 +124,16 @@ const RoleForm = ({ currentRole, setCurrentRole }) => {
           ))}
         </div>
       </div>
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-between  space-x-4">
+        <button type="submit" className="btn btn-primary">
+          {currentRole ? "Update Role" : "Add Role"}
+        </button>
         <button
           type="button"
           className="btn btn-outline"
           onClick={handleCancel}
         >
           Cancel
-        </button>
-        <button type="submit" className="btn btn-primary">
-          {currentRole ? "Update Role" : "Add Role"}
         </button>
       </div>
     </form>
